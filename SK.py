@@ -98,8 +98,6 @@ class SKAlgo(object):
 
     def __polynomial_kernel(self, x, y, p):
         ans = (np.dot(x.transpose(), y) + 1)
-        if len(ans) == 1:  # if array is of size 1, return num instead of array
-            ans = ans[0]
         return ans ** p
 
 
@@ -108,6 +106,7 @@ class SKAlgo(object):
 
 
     def prime(self, x):
+        return x  #TODO remove it
         """ Calculates prime of image. """
         # m calculation formula indicates in slide 5 (Sep 27)
         self.calculate_centroid()
