@@ -39,7 +39,9 @@ def train(sk, eps, max_update_num):
             if i in sk.Ip:
                 y = 1
             alpha_pair.append([i,float(sk.alpha[i]),y])
-    result = sk.mp+","+sk.mn+","+sk.lamb_da+"\n"
+    print adapt_count
+    result = ""
+    result += str(sk.mp)+","+str(sk.mn)+","+str(sk.lamb_da)+"\n"
     result += str(sk.A)+","+str(sk.B)
     for alph in alpha_pair:
         result+=str(alph[0])+str(alph[1])+"\n"

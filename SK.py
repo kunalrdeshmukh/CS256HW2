@@ -24,9 +24,7 @@ class SKAlgo(object):
         self.D, self.E = np.array([],dtype=float),np.array([],dtype=float)
         self.mp, self.mn = np.array([]),np.array([]) # centroids m+ , m-
         self.m = np.array([]) # centroid of all images in train set
-
-
-
+        self.lamb_da = -1
 
     def read(self, class_letter, train_folder_name):
         """Reads images from folder specified."""
@@ -112,8 +110,8 @@ class SKAlgo(object):
         for ele in self.X:
             xin_norms = np.linalg.norm(ele - self.mn)
         rn = xin_norms.max()
-        lamb_da = (r / (rp + rn)) - (r / (rp + rn)) / 2.0
-        return lamb_da * x + (1 - lamb_da) * self.m
+        self.lamb_da = (r / (rp + rn)) - (r / (rp + rn)) / 2.0
+        return self.lamb_da * x + (1 - self.lamb_da) * self.m
 
 
     def initialization(self, kernel_type):
@@ -135,7 +133,7 @@ class SKAlgo(object):
         mi = []
         dinom = math.sqrt(self.A + self.B - 2 * self.C)
         for i in xrange(len(self.X)):
-            if i in Ip:
+            if i in self.Ip:
                 mi.append((self.D[i] - self.E[i] + self.B - self.C) / dinom)
             else:
                 mi.append((self.E[i] - self.D[i] + self.A - self.C) / dinom)
