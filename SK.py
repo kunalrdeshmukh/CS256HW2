@@ -134,9 +134,9 @@ class SKAlgo(object):
 
     def stop(self, eps):
         mi = []
-        print (self.A + self.B - 2 * self.C)
+        # print ("A"self.A + self.B - 2 * self.C)
         dinom = math.sqrt(self.A + self.B - 2 * self.C)
-        # print("A: "+ str(self.A),"B: "+ str(self.B),"C: "+ str(self.C),"D: "+ str(self.D),"E: "+ str(self.E))
+        print("A: "+ str(self.A),"B: "+ str(self.B),"C: "+ str(self.C))
         for i in xrange(len(self.X)):
             if i in self.Ip:
                 mi.append((self.D[i] - self.E[i] + self.B - self.C) / dinom)
@@ -164,8 +164,8 @@ class SKAlgo(object):
             self.A = self.A*(1-q)**2+2*(1-q)*q*self.D[t]+q**2*ktt
             self.C = (1-q)*self.C + q*self.E[t]
             for k in range(len(self.X)):
-                self.D[i]=(1-q)*self.D[i]+q *self.kernel(
-                    self.prime(self.X[i]),self.prime(self.X[t]),'P')
+                self.D[k]=(1-q)*self.D[k]+q *self.kernel(
+                    self.prime(self.X[k]),self.prime(self.X[t]),'P')
         else:
             q = min(1,(self.B-self.E[t]+self.D[t]-self.C)/(self.B + ktt - 2*
                                                         self.E[t]-self.D[t]))
@@ -175,5 +175,5 @@ class SKAlgo(object):
             self.B = self.B*(1-q)**2+2*(1-q)*q*self.E[t]+q**2*ktt
             self.C = (1-q)*self.C + q*self.D[t]
             for k in range(len(self.X)):
-                self.E[i]=(1-q)*self.E[i]+q *self.kernel(
-                    self.prime(self.X[i]),self.prime(self.X[t]),'P')
+                self.E[k]=(1-q)*self.E[k]+q *self.kernel(
+                    self.prime(self.X[k]),self.prime(self.X[t]),'P')

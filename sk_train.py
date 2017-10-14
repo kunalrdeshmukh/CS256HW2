@@ -44,10 +44,11 @@ def train(sk, eps, max_update_num):
             alpha_pair.append([sk.alpha.index(a),float(sk.alpha[sk.alpha.index(a)]),y])
     print adapt_count
     result = ""
-    result += str(sk.mp)+","+str(sk.mn)+","+str(sk.lamb_da)+"\n"
+    result += "class_letter: " + class_letter
+    result += "m: "+str(sk.m)+","+"mp: "+str(sk.mp)+","+"mn: "+ str(sk.mn)+","+str(sk.lamb_da)+"\n"
     result += str(sk.A)+","+str(sk.B)
     for alph in alpha_pair:
-        result+=str(alph+"\n")
+        result+=str(alph)+"\n"
     f = open(model_file_name,'w')
     f.write(result)
     f.close()
