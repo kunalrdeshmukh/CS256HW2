@@ -13,7 +13,7 @@ def load_image(file_name):
         if pixel_array[i] < 127 :
             pixel_array[i] = 0
         else :
-            pixel_array [i] = 1
+            pixel_array [i] = 10
     return pixel_array
 
 def delta(i, t):

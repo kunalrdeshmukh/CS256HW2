@@ -45,6 +45,7 @@ class SKAlgo(object):
                     self.alpha.append((0))
                 found_data = True
                 self.X.append(utils.load_image(train_folder_name + "/" + file_name))
+                indexCounter += 1
             elif (".PNG" in file_name):
                 self.In.append(indexCounter)
                 if first_negative:
@@ -54,14 +55,12 @@ class SKAlgo(object):
                     self.alpha.append(0)
                 found_data = True
                 self.X.append(utils.load_image(train_folder_name + "/" + file_name))
-            indexCounter += 1
+                indexCounter += 1
+        # print("In, Ip: "  +  str(self.In)+ "\n" + str(self.Ip))
         if not found_data:   # If no data in the folder specified print no data
             print("NO DATA")
             sys.exit()
         return names_of_files
-
-
-
 
     def calculate_centroid(self):
         """Calculates Centroids m+ , m-"""
@@ -76,8 +75,13 @@ class SKAlgo(object):
             xip_sum = np.add(xip_sum,self.X[i])
         self.mp = xip_sum / len(self.Ip)
         # calculating m-
+        # print("X: " + str(self.X))
+        # print("len(X): " + str(len(self.X)))
+        # print("len(In)" + str(len(self.In)))
+        # print("len(Ip)" + str(len(self.Ip)))
         for i in self.In:  # starting from the second postitive element
-            xin_sum = np.add(xin_sum, self.X[i])
+            # print("i: " + str(i))
+            xin_sum = np.add(xin_sum, self.X[i-1])
         self.mn = xin_sum / len(self.In)
 
 
@@ -127,8 +131,10 @@ class SKAlgo(object):
             xip = self.prime(self.X[i])
             self.D[i] = self.kernel(xip, xi1p, kernel_type)
             self.E[i] = self.kernel(xip, xj1p, kernel_type)
+
     def stop(self, eps):
         mi = []
+        print (self.A + self.B - 2 * self.C)
         dinom = math.sqrt(self.A + self.B - 2 * self.C)
         # print("A: "+ str(self.A),"B: "+ str(self.B),"C: "+ str(self.C),"D: "+ str(self.D),"E: "+ str(self.E))
         for i in xrange(len(self.X)):
@@ -139,19 +145,21 @@ class SKAlgo(object):
         # print("mi " +str(mi))
         t = mi.index(min(mi))
         # print("t "+ str(t))
-        # print("dinom: " + str(dinom) + " mit: " + str(mi[t])+ " eps: " + str(eps)+"diff: "+ str(dinom - mi[t]))
+        # print("dinom: " + str(dinom) + " mit: " + str(mi[t])+ " eps: " + str(eps)+" diff: "+ str(dinom - mi[t]))
         if (dinom - mi[t]) < eps:
-            print ((dinom - mi[t]) < eps)
+            # print ("dinom - mi[t]  " + str(dinom - mi[t]) + "eps " + str(eps + ))
             return True, t
         return False, t
 
 
     def adapt(self,i,t):
-        ktt = self.kernel(self.X[t],self.X[t],'P')
+        ktt = self.kernel(self.prime(self.X[t]),self.prime(self.X[t]),'P')
+        # print ("Ip" + str(Ip))
         if i in self.Ip:
             q = min(1,(self.A-self.D[t]+self.E[t]-self.C)/(self.A + ktt - 2*
                                                         self.D[t]-self.E[t]))
             # print(str(len(self.alpha))+  "i " + i)
+            # print("i+: "+ str(i)+ " alpha: " + str(self.alpha))
             self.alpha[i] = (1- q)*self.alpha[i] + q * utils.delta(i,t)
             self.A = self.A*(1-q)**2+2*(1-q)*q*self.D[t]+q**2*ktt
             self.C = (1-q)*self.C + q*self.E[t]
@@ -162,6 +170,7 @@ class SKAlgo(object):
             q = min(1,(self.B-self.E[t]+self.D[t]-self.C)/(self.B + ktt - 2*
                                                         self.E[t]-self.D[t]))
             # print(str(len(self.alpha))+  "i " + i)
+            # print("i-: "+ str(i)+ " alpha: " + str(self.alpha))
             self.alpha[i] = (1- q)*self.alpha[i] +q * utils.delta(i,t)
             self.B = self.B*(1-q)**2+2*(1-q)*q*self.E[t]+q**2*ktt
             self.C = (1-q)*self.C + q*self.D[t]

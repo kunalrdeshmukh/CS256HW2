@@ -16,12 +16,14 @@ def train(sk, eps, max_update_num):
     #c_flag = False
     adapt_count = 0
     is_stop = False
-    while not is_stop and adapt_count < max_update_num:
+    while not is_stop and adapt_count < max_update_num and (adapt_count <
+                                                            len(sk.X)):
         is_stop, t = sk.stop(eps)
         print is_stop
         # The stop function check the model convergence < epsilon
         if not is_stop:
             sk.adapt(adapt_count,t)
+            # print("dinom - mi[t]"+ )
             # Repeat the process until convergence < epsilon or
             # more than max_updates adaptation steps have been done
             # (adapt_count >= max_update
@@ -30,6 +32,8 @@ def train(sk, eps, max_update_num):
         adapt_count += 1
     if adapt_count >= max_update_num:
         print "Max updates reached."
+    if (adapt_count < len(sk.X)):
+        print "Finished training Data but didn't converged"
 
     alpha_pair = []
     for a in sk.alpha:
@@ -43,7 +47,7 @@ def train(sk, eps, max_update_num):
     result += str(sk.mp)+","+str(sk.mn)+","+str(sk.lamb_da)+"\n"
     result += str(sk.A)+","+str(sk.B)
     for alph in alpha_pair:
-        result+=str(alph[0])+str(alph[1])+"\n"
+        result+=str(alph+"\n")
     f = open(model_file_name,'w')
     f.write(result)
     f.close()
