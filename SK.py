@@ -19,8 +19,7 @@ class SKAlgo(object):
         self.xi1 = np.array([],dtype=float)  # positive input data set
         self.xj1 = np.array([],dtype=float)  # negative input data set
         self.X = []  # Array of all training images.
-        self.A, self.B, self.C = np.array([],dtype=float),np.array([],
-                                        dtype=float),np.array([],dtype=float)
+        self.A, self.B, self.C = 0.0, 0.0, 0.0
         self.D, self.E = np.array([],dtype=float),np.array([],dtype=float)
         self.mp, self.mn = np.array([]),np.array([]) # centroids m+ , m-
         self.m = np.array([]) # centroid of all images in train set
@@ -45,8 +44,8 @@ class SKAlgo(object):
                 else :
                     self.alpha.append((0))
                 found_data = True
-
-            else:
+                self.X.append(utils.load_image(train_folder_name + "/" + file_name))
+            elif (".PNG" in file_name):
                 self.In.append(indexCounter)
                 if first_negative:
                     self.alpha.append(1)
@@ -54,8 +53,7 @@ class SKAlgo(object):
                 else:
                     self.alpha.append(0)
                 found_data = True
-            self.X.append(
-                utils.load_image(train_folder_name + "/" + file_name))
+                self.X.append(utils.load_image(train_folder_name + "/" + file_name))
             indexCounter += 1
         if not found_data:   # If no data in the folder specified print no data
             print("NO DATA")
@@ -69,7 +67,7 @@ class SKAlgo(object):
         """Calculates Centroids m+ , m-"""
         xi_sum = self.X[1]  # initialize
         xip_sum = 0  # initializing wth the first +vs element
-        xin_sum = 0  # initializing wth the first -ve element
+        xin_sum = 0 #np.zeros(len(self.X)-1)  # initializing wth the first -ve element
         for i in xrange(1, len(self.X)):
             xi_sum = np.add(xi_sum, self.X[i])
         self.m = xi_sum / len(self.X)
@@ -132,13 +130,18 @@ class SKAlgo(object):
     def stop(self, eps):
         mi = []
         dinom = math.sqrt(self.A + self.B - 2 * self.C)
+        # print("A: "+ str(self.A),"B: "+ str(self.B),"C: "+ str(self.C),"D: "+ str(self.D),"E: "+ str(self.E))
         for i in xrange(len(self.X)):
             if i in self.Ip:
                 mi.append((self.D[i] - self.E[i] + self.B - self.C) / dinom)
             else:
                 mi.append((self.E[i] - self.D[i] + self.A - self.C) / dinom)
-        t = np.argmin(np.array(mi))
-        if dinom - mi[t] < eps:
+        # print("mi " +str(mi))
+        t = mi.index(min(mi))
+        # print("t "+ str(t))
+        # print("dinom: " + str(dinom) + " mit: " + str(mi[t])+ " eps: " + str(eps)+"diff: "+ str(dinom - mi[t]))
+        if (dinom - mi[t]) < eps:
+            print ((dinom - mi[t]) < eps)
             return True, t
         return False, t
 
@@ -148,6 +151,7 @@ class SKAlgo(object):
         if i in self.Ip:
             q = min(1,(self.A-self.D[t]+self.E[t]-self.C)/(self.A + ktt - 2*
                                                         self.D[t]-self.E[t]))
+            # print(str(len(self.alpha))+  "i " + i)
             self.alpha[i] = (1- q)*self.alpha[i] + q * utils.delta(i,t)
             self.A = self.A*(1-q)**2+2*(1-q)*q*self.D[t]+q**2*ktt
             self.C = (1-q)*self.C + q*self.E[t]
@@ -157,9 +161,10 @@ class SKAlgo(object):
         else:
             q = min(1,(self.B-self.E[t]+self.D[t]-self.C)/(self.B + ktt - 2*
                                                         self.E[t]-self.D[t]))
-            self.alpha[i] = (1- q)*self.alpha[i] + q * utils.delta(i,t)
+            # print(str(len(self.alpha))+  "i " + i)
+            self.alpha[i] = (1- q)*self.alpha[i] +q * utils.delta(i,t)
             self.B = self.B*(1-q)**2+2*(1-q)*q*self.E[t]+q**2*ktt
             self.C = (1-q)*self.C + q*self.D[t]
             for k in range(len(self.X)):
-                self.E[i]=(1-q)*self.D[E]+q *self.kernel(
+                self.E[i]=(1-q)*self.E[i]+q *self.kernel(
                     self.prime(self.X[i]),self.prime(self.X[t]),'P')

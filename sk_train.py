@@ -18,10 +18,9 @@ def train(sk, eps, max_update_num):
     is_stop = False
     while not is_stop and adapt_count < max_update_num:
         is_stop, t = sk.stop(eps)
+        print is_stop
         # The stop function check the model convergence < epsilon
         if not is_stop:
-
-            x = sk.xip[t]
             sk.adapt(adapt_count,t)
             # Repeat the process until convergence < epsilon or
             # more than max_updates adaptation steps have been done
@@ -33,12 +32,12 @@ def train(sk, eps, max_update_num):
         print "Max updates reached."
 
     alpha_pair = []
-    for i in sk.alpha:
-       if sk.alpha[i] != 0:
+    for a in sk.alpha:
+       if a != 0:
             y = 0
-            if i in sk.Ip:
+            if sk.alpha.index(a) in sk.Ip:
                 y = 1
-            alpha_pair.append([i,float(sk.alpha[i]),y])
+            alpha_pair.append([sk.alpha.index(a),float(sk.alpha[sk.alpha.index(a)]),y])
     print adapt_count
     result = ""
     result += str(sk.mp)+","+str(sk.mn)+","+str(sk.lamb_da)+"\n"
@@ -51,8 +50,8 @@ def train(sk, eps, max_update_num):
 
 
 args = sys.argv
-epsilon = args[1]
-max_updates = args[2]
+epsilon = float(args[1])
+max_updates = int(args[2])
 class_letter = args[3]
 model_file_name = args[4]
 train_folder_name = args[5]
