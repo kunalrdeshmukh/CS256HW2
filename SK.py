@@ -77,14 +77,12 @@ class SKAlgo(object):
         self.m = xi_sum / len(self.X)
         # calculating m+
         for i in self.Ip:  # starting from the second postitive element
-            xip_sum = np.add(xip_sum,self.X[self.Ip[i]])
+            xip_sum = np.add(xip_sum,self.X[i])
         self.mp = xip_sum / len(self.Ip)
         # calculating m-
         for i in self.In:  # starting from the second postitive element
-            xin_sum = np.add(xin_sum, self.X[self.In[i]])
+            xin_sum = np.add(xin_sum, self.X[i])
         self.mn = xin_sum / len(self.In)
-
-
 
 
 
@@ -101,12 +99,7 @@ class SKAlgo(object):
         return ans ** p
 
 
-
-
-
-
     def prime(self, x):
-        return x  #TODO remove it
         """ Calculates prime of image. """
         # m calculation formula indicates in slide 5 (Sep 27)
         self.calculate_centroid()
@@ -132,21 +125,22 @@ class SKAlgo(object):
         self.A = self.kernel(xi1p, xi1p, kernel_type)
         self.B = self.kernel(xj1p, xj1p, kernel_type)
         self.C = self.kernel(xi1p, xj1p, kernel_type)
+        self.D = np.zeros(len(self.X),dtype=float)
+        self.E = np.zeros(len(self.X),dtype=float)
         for i in range(0, len(self.X)):
             xip = self.prime(self.X[i])
             self.D[i] = self.kernel(xip, xi1p, kernel_type)
             self.E[i] = self.kernel(xip, xj1p, kernel_type)
-
-    def stop(self, a, b, c, d, e, eps, classified_flag):
-        mi = np.array([])
-        if classified_flag:
-            for i in range(0, len(d)):
-                mi[i] = ((d[i] - e[i] + b - c) / math.sqrt(a + b - 2 * c))
-        else:
-            for i in range(0, len(d)):
-                mi[i] = ((e[i] - d[i] + a - c) / math.sqrt(a + b - 2 * c))
-        t = mi.argmin()
-        if math.sqrt(a - b - 2 * c) - mi[t] < eps:
+    def stop(self, eps):
+        mi = []
+        dinom = math.sqrt(self.A + self.B - 2 * self.C)
+        for i in xrange(len(self.X)):
+            if i in Ip:
+                mi.append((self.D[i] - self.E[i] + self.B - self.C) / dinom)
+            else:
+                mi.append((self.E[i] - self.D[i] + self.A - self.C) / dinom)
+        t = np.argmin(np.array(mi))
+        if dinom - mi[t] < eps:
             return True, t
         return False, t
 

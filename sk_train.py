@@ -5,8 +5,6 @@ from SK import SKAlgo
 
 KERNEL_TYPE = 'P'  # P: for polynonimal, G: Gauss, L: Layer
 
-
-
 def train(sk, eps, max_update_num):
     # xi1 is the first positive value (image)
     sk.initialization(KERNEL_TYPE)
@@ -19,7 +17,7 @@ def train(sk, eps, max_update_num):
     adapt_count = 0
     is_stop = False
     while not is_stop and adapt_count < max_update_num:
-        is_stop, t = sk.stop(sk.A, sk.B, sk.C, sk.D, sk.E, eps)
+        is_stop, t = sk.stop(eps)
         # The stop function check the model convergence < epsilon
         if not is_stop:
 
@@ -48,9 +46,6 @@ def train(sk, eps, max_update_num):
     f = open(model_file_name,'w')
     f.write(result)
     f.close()
-
-
-
 
 
 args = sys.argv
