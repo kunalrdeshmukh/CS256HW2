@@ -41,9 +41,9 @@ def test(test_folder_name):
     fraction_correct = result_counter/total_sum
     fraction_false_Positive = false_Positive/total_sum
     fraction_false_Negative = false_Negative/total_sum
-    output = 'fraction_correct'+str(fraction_correct)+"\n"
-    output+='fraction_false_Positive'+str(fraction_false_Positive)+"\n"
-    output+='fraction_false_Negative'+str(fraction_false_Negative)+"\n"
+    output = 'fraction_correct: '+str(fraction_correct)+"\n"
+    output+='fraction_false_Positive: '+str(fraction_false_Positive)+"\n"
+    output+='fraction_false_Negative: '+str(fraction_false_Negative)+"\n"
     print(output)
 
 # this is the main logic of test
